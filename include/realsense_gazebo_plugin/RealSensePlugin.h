@@ -67,6 +67,8 @@ public:
   virtual void OnNewFrame(const rendering::CameraPtr cam,
                           const transport::PublisherPtr pub);
 
+  std::string rosNameSpace;
+
 protected:
   /// \brief Pointer to the model containing the plugin.
   physics::ModelPtr rsModel;

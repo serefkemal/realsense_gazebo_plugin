@@ -2,6 +2,7 @@
 #include <sensor_msgs/fill_image.hpp>
 #include <sensor_msgs/image_encodings.hpp>
 #include <sensor_msgs/point_cloud2_iterator.hpp>
+#include <gazebo_ros/node.hpp>
 
 namespace
 {
@@ -15,7 +16,6 @@ namespace gazebo
 {
 // Register the plugin
 GZ_REGISTER_MODEL_PLUGIN(GazeboRosRealsense)
-
 GazeboRosRealsense::GazeboRosRealsense()
 {
 }
@@ -28,8 +28,12 @@ GazeboRosRealsense::~GazeboRosRealsense()
 void GazeboRosRealsense::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
 
-  this->node_ = rclcpp::Node::make_shared("GazeboRealsenseNode");
+  
+  // Initialize ROS node
+  // this->node_ = rclcpp::Node::make_shared(RealSensePlugin::rosNameSpace + "asd");
+  this->node_ = gazebo_ros::Node::Get(_sdf,_model);
 
+  std::cout << "debug1" << std::endl;
   // Make sure the ROS node for Gazebo has already been initialized
   if (!rclcpp::ok()) {
     RCLCPP_ERROR(

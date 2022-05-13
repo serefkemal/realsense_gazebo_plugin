@@ -9,6 +9,8 @@
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <camera_info_manager/camera_info_manager.hpp>
 #include <image_transport/image_transport.hpp>
+#include <gazebo_ros/node.hpp>
+
 
 #include <memory>
 #include <string>
@@ -60,7 +62,8 @@ protected:
   ///  A node will be instantiated if it does not exist.
 
 protected:
-  rclcpp::Node::SharedPtr node_;
+  // rclcpp::Node::SharedPtr node_;
+  gazebo_ros::Node::SharedPtr node_;
 
 private:
   std::unique_ptr<image_transport::ImageTransport> itnode_;

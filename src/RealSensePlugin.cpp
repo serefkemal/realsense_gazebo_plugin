@@ -50,14 +50,14 @@ void RealSensePlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     std::endl <<
     "RealSensePlugin: The realsense_camera plugin is attach to model " <<
     _model->GetName() << std::endl;
-
+  std::cout << "debug2" << std::endl;
   _sdf = _sdf->GetFirstElement();
 
   cameraParamsMap_.insert(std::make_pair(COLOR_CAMERA_NAME, CameraParams()));
   cameraParamsMap_.insert(std::make_pair(DEPTH_CAMERA_NAME, CameraParams()));
   cameraParamsMap_.insert(std::make_pair(IRED1_CAMERA_NAME, CameraParams()));
   cameraParamsMap_.insert(std::make_pair(IRED2_CAMERA_NAME, CameraParams()));
-
+  std::cout << "debug3" << std::endl;
   do {
     std::string name = _sdf->GetName();
     if (name == "depthUpdateRate") {
@@ -119,12 +119,12 @@ void RealSensePlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     } else if (name == "robotNamespace") {
       break;
     } else {
-      throw std::runtime_error("Ivalid parameter for ReakSensePlugin");
+      std::cout << "Problem with:" << name << std::endl;
     }
 
     _sdf = _sdf->GetNextElement();
   } while (_sdf);
-
+  std::cout << "debug4" << std::endl;
   // Store a pointer to the this model
   this->rsModel = _model;
 
@@ -133,12 +133,12 @@ void RealSensePlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   // Sensors Manager
   sensors::SensorManager * smanager = sensors::SensorManager::Instance();
-
+  std::cout << "debug5" << std::endl;
   // Get Cameras Renderers
   this->depthCam = std::dynamic_pointer_cast<sensors::DepthCameraSensor>(
     smanager->GetSensor(prefix + DEPTH_CAMERA_NAME))
     ->DepthCamera();
-
+  std::cout << "debug6" << std::endl;
   this->ired1Cam = std::dynamic_pointer_cast<sensors::CameraSensor>(
     smanager->GetSensor(prefix + IRED1_CAMERA_NAME))
     ->Camera();
@@ -148,6 +148,7 @@ void RealSensePlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
   this->colorCam = std::dynamic_pointer_cast<sensors::CameraSensor>(
     smanager->GetSensor(prefix + COLOR_CAMERA_NAME))
     ->Camera();
+  std::cout << "debug7" << std::endl;
 
   // Check if camera renderers have been found successfuly
   if (!this->depthCam) {
@@ -181,6 +182,7 @@ void RealSensePlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
       std::endl;
     return;
   }
+  std::cout << "debug6" << std::endl;
 
   // Setup Transport Node
   this->transportNode = transport::NodePtr(new transport::Node());
@@ -188,6 +190,8 @@ void RealSensePlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 
   // Setup Publishers
   std::string rsTopicRoot = "~/" + this->rsModel->GetName();
+  std::cout << "topic root name is: " << rsTopicRoot << std::endl;
+  this->rosNameSpace = rsTopicRoot;
 
   this->depthPub = this->transportNode->Advertise<msgs::ImageStamped>(
     rsTopicRoot + DEPTH_CAMERA_TOPIC, 1, depthUpdateRate_);
@@ -197,6 +201,9 @@ void RealSensePlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
     rsTopicRoot + IRED2_CAMERA_TOPIC, 1, infraredUpdateRate_);
   this->colorPub = this->transportNode->Advertise<msgs::ImageStamped>(
     rsTopicRoot + COLOR_CAMERA_TOPIC, 1, colorUpdateRate_);
+
+  std::cout << "debug4" << std::endl;
+
 
   // Listen to depth camera new frame event
   this->newDepthFrameConn = this->depthCam->ConnectNewDepthFrame(
